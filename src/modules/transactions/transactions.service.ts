@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { Model } from 'mongoose';
 import { InjectModel } from "@nestjs/mongoose";
 import { Transaction } from "./interfaces/transaction.interface";
@@ -23,9 +23,15 @@ export class TransactionsService {
         let bankAccountFound: BankAccount = await this.bankAccountsService.getOne(bankAccount);
 
         if (transactionDto.transactionType === TransactionType.INCOMING_TRANSACTION) {
+
             bankAccountFound.balance = bankAccountFound.balance + transactionDto.moveValue
+
         } else {
-            bankAccountFound.balance = bankAccountFound.balance - transactionDto.moveValue
+            if (bankAccountFound.balance >= transactionDto.moveValue) {
+                bankAccountFound.balance = bankAccountFound.balance - transactionDto.moveValue
+            } else {
+                throw new BadRequestException(`transaction amount exceeds available balance`);
+            }
         }
 
         await this.bankAccountsService.update(bankAccountFound._id, bankAccountFound)
@@ -33,6 +39,7 @@ export class TransactionsService {
         const transaction = new this.transactionModel(transactionDto);
         return await transaction.save();
     }
+
 
     async get(): Promise<Transaction[]> {
         return await this.transactionModel.find().populate(['bankAccount']).exec();
