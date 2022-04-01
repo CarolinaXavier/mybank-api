@@ -26,7 +26,7 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 ## Link modelagem de dados
-https://drive.google.com/drive/u/3/my-drive
+https://drive.google.com/file/d/1EdKdK4oT2nm7Om9m-TTJifsjIN4r5gp5/view?usp=sharing
 
 ## Installation
 
